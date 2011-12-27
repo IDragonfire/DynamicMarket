@@ -7,7 +7,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -23,13 +22,12 @@ import dynamicmarket.core.Shop;
 @Table(name = "dm_cuboidshoparea")
 public class CuboidShopArea {
     @Id
-    private int cuboidshopareaid;
-    @OneToMany(mappedBy = "cuboidarea", cascade = CascadeType.ALL)
+    private int id;
+    @OneToMany(mappedBy = "area", cascade = CascadeType.ALL)
     @NotNull
-    private List<DLocation> locs;
+    private List<DLocation> locs = new ArrayList<DLocation>();;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shop_id")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "area")
     private Shop shop;
 
     public Shop getShop() {
@@ -41,16 +39,15 @@ public class CuboidShopArea {
     }
 
     public CuboidShopArea() {
-	this.locs = new ArrayList<DLocation>();
+	// for persist
     }
 
-    public void addLocation(Object locationObject, Shop shop2)
+    public void addLocation(Object locationObject)
 	    throws DynamicMarketException {
 	if (locationObject instanceof DLocation) {
 	    this.locs.add((DLocation) locationObject);
 	    // TODO: FIX SAVE
-	    ((DLocation) locationObject).setCuboidarea(this);
-	    this.shop = shop2;
+	    ((DLocation) locationObject).setArea(this);
 	} else {
 	    throw new DynamicMarketException("Wrong Location object");
 	}
@@ -89,19 +86,19 @@ public class CuboidShopArea {
 	return shopIndex;
     }
 
-    public int getCuboidshopareaid() {
-	return this.cuboidshopareaid;
-    }
-
-    public void setCuboidshopareaid(int cuboidshopareaid) {
-	this.cuboidshopareaid = cuboidshopareaid;
-    }
-
     public List<DLocation> getLocs() {
 	return this.locs;
     }
 
     public void setLocs(ArrayList<DLocation> locs) {
 	this.locs = locs;
+    }
+
+    public int getId() {
+	return this.id;
+    }
+
+    public void setId(int id) {
+	this.id = id;
     }
 }

@@ -110,18 +110,20 @@ public class DynamicCreateShopAreaListener extends BlockListener {
 	try {
 	    if (this.shop.getArea() == null) {
 		this.shop.setArea(new CuboidShopArea());
+		this.shop.getArea().setShop(this.shop);
 		DynamicMarket.INSTANCE.getDatabase()
 			.insert(this.shop.getArea());
+		DynamicMarket.INSTANCE.getDatabase().update(this.shop);
 	    }
 	    DLocation newLoc = new DLocation(this.pos1.getBlockX(),
 		    this.pos2.getBlockX(), this.pos1.getBlockY(),
 		    this.pos2.getBlockY(), this.pos1.getBlockZ(),
 		    this.pos2.getBlockZ(), this.pos1.getWorld().getName());
-	    this.shop.getArea().addLocation(newLoc, this.shop);
+	    this.shop.getArea().addLocation(newLoc);
 	    DynamicMarket.INSTANCE.getDatabase().insert(newLoc);
 	    // DynamicMarket.INSTANCE.getDatabase().update(newLoc);
-	    DynamicMarket.INSTANCE.getDatabase().update(this.shop.getArea());
-	    DynamicMarket.INSTANCE.getDatabase().update(this.shop);
+	    // DynamicMarket.INSTANCE.getDatabase().update(this.shop.getArea());
+	    // DynamicMarket.INSTANCE.getDatabase().update(this.shop);
 	} catch (DynamicMarketException e) {
 	    this.creator.sendMessage(e.getMessage());
 	}

@@ -31,14 +31,14 @@ public class DLocation {
     // TODO: FIX SAVE
 
     @ManyToOne
-    private CuboidShopArea cuboidarea;
+    private CuboidShopArea area;
 
-    public CuboidShopArea getCuboidarea() {
-	return this.cuboidarea;
+    public CuboidShopArea getArea() {
+	return this.area;
     }
 
-    public void setCuboidarea(CuboidShopArea cuboidarea) {
-	this.cuboidarea = cuboidarea;
+    public void setArea(CuboidShopArea area) {
+	this.area = area;
     }
 
     public DLocation() {
