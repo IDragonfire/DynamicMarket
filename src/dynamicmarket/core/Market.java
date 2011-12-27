@@ -24,6 +24,7 @@ import java.util.List;
 import org.bukkit.Location;
 
 import dynamicmarket.DynamicMarketException;
+import dynamicmarket.data.CuboidShopArea;
 
 public class Market {
     // TODO: refactor?
@@ -49,19 +50,32 @@ public class Market {
 	this.shops.add(shop);
     }
 
-    public Shop getShopById(int id) {
+    public Shop getShopById(int id) throws DynamicMarketException {
+	if (this.shops == null) {
+	    throw new DynamicMarketException("Shops didn't init correctly");
+	}
 	for (int i = 0; i < this.shops.size(); i++) {
 	    if (this.shops.get(i).getId() == id) {
 		return this.shops.get(i);
 	    }
 	}
-	return null;
+	throw new DynamicMarketException("Shop with these id doesn't exists");
     }
 
     // TODO: more then one shop per location?
     public Shop getShop(Location loc) throws DynamicMarketException {
+	if (this.shops == null) {
+	    throw new DynamicMarketException("Shops didn't init correctly");
+	}
+	if (loc == null) {
+	    throw new DynamicMarketException(
+		    "Location is for finding shop ist null");
+	}
+	CuboidShopArea tmparea;
 	for (int i = 0; i < this.shops.size(); i++) {
-	    if (this.shops.get(i).isShopInLocation(loc)) {
+	    System.out.println("##############shop" + i);
+	    tmparea = this.shops.get(i).getArea();
+	    if (tmparea != null && tmparea.isShopInArea(loc)) {
 		return this.shops.get(i);
 	    }
 	}

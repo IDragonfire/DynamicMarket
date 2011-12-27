@@ -395,7 +395,7 @@ public class ShopCommands // TODO: All shop modification/creation/deletion comma
 
 	    Messaging.send(sender, lines);
 	} catch (DynamicMarketException e) {
-	    e.printStackTrace();
+	    sender.sendMessage(e.getMessage());
 	}
     }
 
@@ -412,6 +412,7 @@ public class ShopCommands // TODO: All shop modification/creation/deletion comma
 
     @Command(aliases = { "remove", "r" }, desc = "Removes an item from the shop", usage = "<id>[:<subType>]", min = 1, max = 1)
     @CommandPermissions("items.remove")
+    //TODO add shopid param
     public static void remove(CommandContext args, DynamicMarket plugin,
 	    CommandSender sender) {
 	try {
@@ -458,6 +459,7 @@ public class ShopCommands // TODO: All shop modification/creation/deletion comma
     @SuppressWarnings("boxing")
     @Command(aliases = { "update", "u" }, desc = "Updates an item at the shop", usage = "<id>[:<bundleSize>] [buyPrice] [sellPrice] [tagList]", min = 1, max = 12)
     @CommandPermissions("items.update")
+    //TODO add shopid param
     public static void update(CommandContext args, DynamicMarket plugin,
 	    CommandSender sender) {
 	try {

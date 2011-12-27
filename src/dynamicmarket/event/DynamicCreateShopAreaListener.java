@@ -8,8 +8,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockListener;
 
+import dynamicmarket.DynamicMarketException;
 import dynamicmarket.core.DynamicMarket;
 import dynamicmarket.core.Shop;
+import dynamicmarket.data.CuboidShopArea;
+import dynamicmarket.data.DLocation;
 
 public class DynamicCreateShopAreaListener extends BlockListener {
     private Shop shop;
@@ -104,13 +107,24 @@ public class DynamicCreateShopAreaListener extends BlockListener {
     }
 
     private void savePosition() {
-	this.shop.setPos1x(this.pos1.getBlockX());
-	this.shop.setPos1y(this.pos1.getBlockY());
-	this.shop.setPos1z(this.pos1.getBlockZ());
-	this.shop.setPos2x(this.pos2.getBlockX());
-	this.shop.setPos2y(this.pos2.getBlockY());
-	this.shop.setPos2z(this.pos2.getBlockZ());
-	DynamicMarket.INSTANCE.getDatabase().update(this.shop);
+	try {
+	    if (this.shop.getArea() == null) {
+		this.shop.setArea(new CuboidShopArea());
+		DynamicMarket.INSTANCE.getDatabase()
+			.insert(this.shop.getArea());
+	    }
+	    DLocation newLoc = new DLocation(this.pos1.getBlockX(),
+		    this.pos2.getBlockX(), this.pos1.getBlockY(),
+		    this.pos2.getBlockY(), this.pos1.getBlockZ(),
+		    this.pos2.getBlockZ(), this.pos1.getWorld().getName());
+	    this.shop.getArea().addLocation(newLoc, this.shop);
+	    DynamicMarket.INSTANCE.getDatabase().insert(newLoc);
+	    // DynamicMarket.INSTANCE.getDatabase().update(newLoc);
+	    DynamicMarket.INSTANCE.getDatabase().update(this.shop.getArea());
+	    DynamicMarket.INSTANCE.getDatabase().update(this.shop);
+	} catch (DynamicMarketException e) {
+	    this.creator.sendMessage(e.getMessage());
+	}
     }
 
     private void sendFakePackageThread(final Location pos) {

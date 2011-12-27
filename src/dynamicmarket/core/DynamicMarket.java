@@ -30,6 +30,8 @@ import com.sk89q.minecraft.util.commands.MissingNestedCommandException;
 import com.sk89q.minecraft.util.commands.WrappedCommandException;
 
 import dynamicmarket.command.Commands;
+import dynamicmarket.data.CuboidShopArea;
+import dynamicmarket.data.DLocation;
 import dynamicmarket.data.IO;
 import dynamicmarket.data.MyDatabase;
 import dynamicmarket.data.Setting;
@@ -64,7 +66,8 @@ public class DynamicMarket extends BukkitUtilJavaPlugin {
 		list.add(Shop.class);
 		list.add(Product.class);
 		list.add(Transaction.class);
-
+		list.add(CuboidShopArea.class);
+		list.add(DLocation.class);
 		return list;
 	    }
 	};
@@ -73,8 +76,7 @@ public class DynamicMarket extends BukkitUtilJavaPlugin {
 		getSetting(Setting.URL, String.class),
 		getSetting(Setting.USERNAME, String.class),
 		getSetting(Setting.PASSWORD, String.class),
-		getSetting(Setting.ISOLATION, String.class),
-		getSetting(Setting.LOGGING, Boolean.class), false // If an update to database structure is done, a function to determine whether or not to rebuild is be written.
+		getSetting(Setting.ISOLATION, String.class), true, false // If an update to database structure is done, a function to determine whether or not to rebuild is be written.
 		);
 	this.database.getDatabase().getAdminLogging().setLogLevel(LogLevel.SQL);
     }
@@ -108,8 +110,8 @@ public class DynamicMarket extends BukkitUtilJavaPlugin {
 
 	// Extract files.
 	try {
-	    bukkitutil.IO.extract(this, "config.yml", "messages.yml", "shops.csv",
-		    "LICENSE.txt");
+	    bukkitutil.IO.extract(this, "config.yml", "messages.yml",
+		    "shops.csv", "LICENSE.txt");
 	} catch (IOException e) {
 	    log(Level.SEVERE, "Error extracting resources; disabling.");
 	    e.printStackTrace();

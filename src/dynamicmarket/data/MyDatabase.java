@@ -96,6 +96,7 @@ public abstract class MyDatabase {
 	    // Create all tables
 	    installDatabase(rebuild);
 	} catch (Exception ex) {
+	    ex.printStackTrace();
 	    throw new RuntimeException(
 		    "An exception has occured while initializing the database",
 		    ex);
@@ -178,6 +179,7 @@ public abstract class MyDatabase {
 	    // Setup Ebean based on the configuration
 	    this.ebeanServer = EbeanServerFactory.create(this.serverConfig);
 	} catch (Exception ex) {
+	    ex.printStackTrace();
 	    throw new RuntimeException(
 		    "Failed to create a new instance of the EbeanServer", ex);
 	} finally {

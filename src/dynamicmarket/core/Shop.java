@@ -23,11 +23,13 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.bukkit.Location;
 import org.bukkit.material.MaterialData;
 
 import bukkitutil.Format;
@@ -38,6 +40,7 @@ import com.avaje.ebean.validation.NotNull;
 import com.sk89q.minecraft.util.commands.CommandContext;
 
 import dynamicmarket.DynamicMarketException;
+import dynamicmarket.data.CuboidShopArea;
 
 @Entity
 @Table(name = "dm_shops")
@@ -62,13 +65,15 @@ public class Shop // TODO: Add location support.
     @NotNull
     private int maxTransactionSize;
 
-    // TODO: own Location class
-    private int pos1x;
-    private int pos1y;
-    private int pos1z;
-    private int pos2x;
-    private int pos2y;
-    private int pos2z;
+    // first shop has a higher priority then the last added
+    @NotNull
+    private int priority;
+
+    // TODO: allowed
+    // @NotNull
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "area_id")
+    private CuboidShopArea area;
 
     // Constructors.
     public Shop() {
@@ -208,66 +213,19 @@ public class Shop // TODO: Add location support.
 	return line.substring(0, line.length() - 1); // Remove the extra '\n'.
     }
 
-    // TODO: later save min, max if loaded !!
-    public boolean isShopInLocation(Location loc) {
-	int minX = Math.min(this.pos1x, this.pos2x), maxX = Math.max(
-		this.pos1x, this.pos2x);
-	int minY = Math.min(this.pos1y, this.pos2y), maxY = Math.max(
-		this.pos1y, this.pos2y);
-	int minZ = Math.min(this.pos1z, this.pos2z), maxZ = Math.max(
-		this.pos1z, this.pos2z);
-	return minX <= loc.getX() && loc.getX() <= maxX && minY <= loc.getY()
-		&& loc.getY() <= maxY && minZ <= loc.getZ()
-		&& loc.getZ() <= maxZ;
+    public int getPriority() {
+	return this.priority;
     }
 
-    // dirty Location stuff
-
-    public int getPos1x() {
-	return this.pos1x;
+    public void setPriority(int priority) {
+	this.priority = priority;
     }
 
-    public void setPos1x(int pos1x) {
-	this.pos1x = pos1x;
+    public CuboidShopArea getArea() {
+	return this.area;
     }
 
-    public int getPos1y() {
-	return this.pos1y;
-    }
-
-    public void setPos1y(int pos1y) {
-	this.pos1y = pos1y;
-    }
-
-    public int getPos1z() {
-	return this.pos1z;
-    }
-
-    public void setPos1z(int pos1z) {
-	this.pos1z = pos1z;
-    }
-
-    public int getPos2x() {
-	return this.pos2x;
-    }
-
-    public void setPos2x(int pos2x) {
-	this.pos2x = pos2x;
-    }
-
-    public int getPos2y() {
-	return this.pos2y;
-    }
-
-    public void setPos2y(int pos2y) {
-	this.pos2y = pos2y;
-    }
-
-    public int getPos2z() {
-	return this.pos2z;
-    }
-
-    public void setPos2z(int pos2z) {
-	this.pos2z = pos2z;
+    public void setArea(CuboidShopArea area) {
+	this.area = area;
     }
 }
