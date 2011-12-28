@@ -76,7 +76,12 @@ public class Market {
 	for (int i = 0; i < this.shops.size(); i++) {
 	    System.out.println("##############shop" + i);
 	    tmparea = this.shops.get(i).getArea();
-	    if (tmparea != null && tmparea.isShopInArea(loc)) {
+	    if (tmparea == null) {
+		throw new DynamicMarketException("No area defined");
+	    }
+	    System.out.println("########### AREA NOT NULL id:"
+		    + tmparea.getId());
+	    if (tmparea.isShopInArea(loc)) {
 		return this.shops.get(i);
 	    }
 	}

@@ -22,10 +22,10 @@ public class CuboidShopArea extends ShopArea {
 
     @OneToMany(mappedBy = "area", cascade = CascadeType.ALL)
     @NotNull
-    private List<DLocation> locs = new ArrayList<DLocation>();
+    private List<DLocation> locs;
 
     public CuboidShopArea() {
-	// for persist
+	this.locs = new ArrayList<DLocation>();
     }
 
     @Override
