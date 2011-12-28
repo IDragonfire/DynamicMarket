@@ -77,7 +77,7 @@ public class DynamicMarket extends BukkitUtilJavaPlugin {
 		getSetting(Setting.DRIVER, String.class),
 		getSetting(Setting.URL, String.class),
 		getSetting(Setting.USERNAME, String.class),
-		getSetting(Setting.PASSWORD, String.class), // TODO: set logging false
+		getSetting(Setting.PASSWORD, String.class), // TODO: set logging to settings
 		getSetting(Setting.ISOLATION, String.class), true, false);
 	// TODO: set logging false
 	this.database.getDatabase().getAdminLogging().setLogLevel(LogLevel.SQL);
@@ -151,7 +151,17 @@ public class DynamicMarket extends BukkitUtilJavaPlugin {
 	} else {
 	    this.market = new Market(shops);
 	}
-
+	try {
+	    // TODO: hotfix
+	    for (int i = 0; i < this.market.getShops().size(); i++) {
+		ShopArea sa = this.market.getShops().get(i).getArea();
+		if (sa instanceof CuboidShopArea) {
+		    ((CuboidShopArea) sa).getLocs().size();
+		}
+	    }
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
 	log(Level.INFO, "Enabled.");
     }
 
