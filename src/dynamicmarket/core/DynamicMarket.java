@@ -63,6 +63,7 @@ public class DynamicMarket extends BukkitUtilJavaPlugin {
 	    @Override
 	    protected java.util.List<Class<?>> getDatabaseClasses() {
 		List<Class<?>> list = new ArrayList<Class<?>>();
+		list.add(Market.class);
 		list.add(Shop.class);
 		list.add(Product.class);
 		list.add(Transaction.class);
