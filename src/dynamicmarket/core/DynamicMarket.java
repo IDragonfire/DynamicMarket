@@ -57,13 +57,11 @@ public class DynamicMarket extends BukkitUtilJavaPlugin {
     }
 
     // Method template by LennardF1989
-    @SuppressWarnings("boxing")
     private void initializeDatabase() {
 	this.database = new MyDatabase(this) {
 	    @Override
 	    protected java.util.List<Class<?>> getDatabaseClasses() {
 		List<Class<?>> list = new ArrayList<Class<?>>();
-		list.add(Market.class);
 		list.add(Shop.class);
 		list.add(Product.class);
 		list.add(Transaction.class);
@@ -72,13 +70,14 @@ public class DynamicMarket extends BukkitUtilJavaPlugin {
 		return list;
 	    }
 	};
+	// If an update to database structure is done, a function to determine whether or not to rebuild is be written.
 	this.database.initializeDatabase(
 		getSetting(Setting.DRIVER, String.class),
 		getSetting(Setting.URL, String.class),
 		getSetting(Setting.USERNAME, String.class),
-		getSetting(Setting.PASSWORD, String.class),
-		getSetting(Setting.ISOLATION, String.class), true, false // If an update to database structure is done, a function to determine whether or not to rebuild is be written.
-		);
+		getSetting(Setting.PASSWORD, String.class), // TODO: set logging false
+		getSetting(Setting.ISOLATION, String.class), true, false);
+	// TODO: set logging false
 	this.database.getDatabase().getAdminLogging().setLogLevel(LogLevel.SQL);
     }
 

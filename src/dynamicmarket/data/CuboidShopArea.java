@@ -30,18 +30,6 @@ public class CuboidShopArea {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "area")
     private Shop shop;
 
-    public Shop getShop() {
-	return this.shop;
-    }
-
-    public void setShop(Shop shop) {
-	this.shop = shop;
-    }
-
-    public void setLocs(List<DLocation> locs) {
-	this.locs = locs;
-    }
-
     public CuboidShopArea() {
 	// for persist
     }
@@ -58,17 +46,16 @@ public class CuboidShopArea {
 
     }
 
-    public boolean isShopInArea(Location loc) {
-	return getShopArea(loc) > -1;
+    public int getId() {
+	return this.id;
     }
 
-    public void removeLocation(Location loc) throws DynamicMarketException {
-	int index = getShopArea(loc);
-	if (index < 0) {
-	    // TODO 0.Message System
-	    throw new DynamicMarketException("Shop not found");
-	}
-	this.locs.remove(index);
+    public List<DLocation> getLocs() {
+	return this.locs;
+    }
+
+    public Shop getShop() {
+	return this.shop;
     }
 
     private int getShopArea(Location loc) {
@@ -91,15 +78,28 @@ public class CuboidShopArea {
 	return shopIndex;
     }
 
-    public List<DLocation> getLocs() {
-	return this.locs;
+    public boolean isShopInArea(Location loc) {
+	return getShopArea(loc) > -1;
     }
 
-    public int getId() {
-	return this.id;
+    public void removeLocation(Location loc) throws DynamicMarketException {
+	int index = getShopArea(loc);
+	if (index < 0) {
+	    // TODO 0.Message System
+	    throw new DynamicMarketException("Shop not found");
+	}
+	this.locs.remove(index);
     }
 
     public void setId(int id) {
 	this.id = id;
+    }
+
+    public void setLocs(List<DLocation> locs) {
+	this.locs = locs;
+    }
+
+    public void setShop(Shop shop) {
+	this.shop = shop;
     }
 }
