@@ -72,6 +72,7 @@ public class Market {
 		    "Location is for finding shop ist null");
 	}
 	CuboidShopArea tmparea;
+	System.out.println("###### shop size: " + this.shops.size());
 	for (int i = 0; i < this.shops.size(); i++) {
 	    System.out.println("##############shop" + i);
 	    tmparea = this.shops.get(i).getArea();

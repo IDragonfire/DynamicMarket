@@ -38,6 +38,10 @@ public class CuboidShopArea {
 	this.shop = shop;
     }
 
+    public void setLocs(List<DLocation> locs) {
+	this.locs = locs;
+    }
+
     public CuboidShopArea() {
 	// for persist
     }
@@ -70,6 +74,7 @@ public class CuboidShopArea {
     private int getShopArea(Location loc) {
 	int shopIndex = -1;
 	DLocation shoploc;
+	System.out.println("######### area size" + this.locs.size());
 	for (int i = 0; i < this.locs.size(); i++) {
 	    System.out.println("##############area" + i);
 	    shoploc = this.locs.get(i);
@@ -88,10 +93,6 @@ public class CuboidShopArea {
 
     public List<DLocation> getLocs() {
 	return this.locs;
-    }
-
-    public void setLocs(ArrayList<DLocation> locs) {
-	this.locs = locs;
     }
 
     public int getId() {

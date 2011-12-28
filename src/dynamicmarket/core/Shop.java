@@ -69,7 +69,7 @@ public class Shop // TODO: Add location support.
     @NotNull
     private int priority;
 
-    // TODO: allowed
+    // TODO: allowed notnull?
     // @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "area_id")
@@ -226,6 +226,8 @@ public class Shop // TODO: Add location support.
     }
 
     public void setArea(CuboidShopArea area) {
+	System.out.println("set are a" + area + ": area size"
+		+ area.getLocs().size());
 	this.area = area;
     }
 }
