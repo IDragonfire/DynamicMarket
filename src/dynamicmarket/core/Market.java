@@ -24,7 +24,7 @@ import java.util.List;
 import org.bukkit.Location;
 
 import dynamicmarket.DynamicMarketException;
-import dynamicmarket.data.CuboidShopArea;
+import dynamicmarket.data.ShopArea;
 
 public class Market {
     // TODO: refactor?
@@ -71,7 +71,7 @@ public class Market {
 	    throw new DynamicMarketException(
 		    "Location is for finding shop ist null");
 	}
-	CuboidShopArea tmparea;
+	ShopArea tmparea;
 	System.out.println("###### shop size: " + this.shops.size());
 	for (int i = 0; i < this.shops.size(); i++) {
 	    System.out.println("##############shop" + i);

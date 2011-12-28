@@ -2,7 +2,10 @@ package dynamicmarket.data;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.bukkit.Location;
@@ -10,20 +13,44 @@ import org.bukkit.Location;
 import dynamicmarket.DynamicMarketException;
 import dynamicmarket.core.Shop;
 
-// persis not in used
 @Entity
 @Inheritance
 @DiscriminatorColumn(name = "type")
 @Table(name = "dm_shoparea")
-public interface ShopArea {
+public abstract class ShopArea {
 
-    boolean isShopInArea(Location loc);
+    @Id
+    private int id;
 
-    void removeLocation(Location loc) throws DynamicMarketException;
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "area")
+    private Shop shop;
 
-    void addLocation(Object locationObject) throws DynamicMarketException;
+    public ShopArea() {
+	// TODO Auto-generated constructor stub
+    }
 
-    void addLocation(Object locationObject, Shop shop)
+    public abstract boolean isShopInArea(Location loc);
+
+    public abstract void removeLocation(Location loc)
 	    throws DynamicMarketException;
+
+    public abstract void addLocation(Object locationObject)
+	    throws DynamicMarketException;
+
+    public Shop getShop() {
+	return this.shop;
+    }
+
+    public int getId() {
+	return this.id;
+    }
+
+    public void setId(int id) {
+	this.id = id;
+    }
+
+    public void setShop(Shop shop) {
+	this.shop = shop;
+    }
 
 }

@@ -35,6 +35,7 @@ import dynamicmarket.data.DLocation;
 import dynamicmarket.data.IO;
 import dynamicmarket.data.MyDatabase;
 import dynamicmarket.data.Setting;
+import dynamicmarket.data.ShopArea;
 import dynamicmarket.event.DynamicMarketMasterShopAreaListener;
 
 public class DynamicMarket extends BukkitUtilJavaPlugin {
@@ -65,6 +66,7 @@ public class DynamicMarket extends BukkitUtilJavaPlugin {
 		list.add(Shop.class);
 		list.add(Product.class);
 		list.add(Transaction.class);
+		list.add(ShopArea.class);
 		list.add(CuboidShopArea.class);
 		list.add(DLocation.class);
 		return list;
@@ -79,6 +81,9 @@ public class DynamicMarket extends BukkitUtilJavaPlugin {
 		getSetting(Setting.ISOLATION, String.class), true, false);
 	// TODO: set logging false
 	this.database.getDatabase().getAdminLogging().setLogLevel(LogLevel.SQL);
+	System.out.println("########"
+		+ this.database.getDatabase().find(CuboidShopArea.class)
+			.findList().size());
     }
 
     @Override

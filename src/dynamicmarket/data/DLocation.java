@@ -27,7 +27,6 @@ public class DLocation {
     private int minY;
     @NotNull
     private int minZ;
-
     @NotNull
     private String world;
 

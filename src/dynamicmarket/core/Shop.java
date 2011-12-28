@@ -40,7 +40,7 @@ import com.avaje.ebean.validation.NotNull;
 import com.sk89q.minecraft.util.commands.CommandContext;
 
 import dynamicmarket.DynamicMarketException;
-import dynamicmarket.data.CuboidShopArea;
+import dynamicmarket.data.ShopArea;
 
 @Entity
 @Table(name = "dm_shops")
@@ -73,7 +73,7 @@ public class Shop // TODO: Add location support.
     // @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "area_id")
-    private CuboidShopArea area;
+    private ShopArea area;
 
     // Constructors.
     public Shop() {
@@ -221,13 +221,11 @@ public class Shop // TODO: Add location support.
 	this.priority = priority;
     }
 
-    public CuboidShopArea getArea() {
+    public ShopArea getArea() {
 	return this.area;
     }
 
-    public void setArea(CuboidShopArea area) {
-	System.out.println("set are a" + area + ": area size"
-		+ area.getLocs().size());
+    public void setArea(ShopArea area) {
 	this.area = area;
     }
 }

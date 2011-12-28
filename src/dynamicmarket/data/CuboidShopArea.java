@@ -4,36 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
+import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 import org.bukkit.Location;
 
 import com.avaje.ebean.validation.NotNull;
 
 import dynamicmarket.DynamicMarketException;
-import dynamicmarket.core.Shop;
 
 @Entity
-@Table(name = "dm_cuboidshoparea")
-public class CuboidShopArea {
-    @Id
-    private int id;
+@Inheritance
+@DiscriminatorValue("CuboidShopArea")
+public class CuboidShopArea extends ShopArea {
+
     @OneToMany(mappedBy = "area", cascade = CascadeType.ALL)
     @NotNull
-    private List<DLocation> locs = new ArrayList<DLocation>();;
-
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "area")
-    private Shop shop;
+    private List<DLocation> locs = new ArrayList<DLocation>();
 
     public CuboidShopArea() {
 	// for persist
     }
 
+    @Override
     public void addLocation(Object locationObject)
 	    throws DynamicMarketException {
 	if (locationObject instanceof DLocation) {
@@ -46,16 +41,8 @@ public class CuboidShopArea {
 
     }
 
-    public int getId() {
-	return this.id;
-    }
-
     public List<DLocation> getLocs() {
 	return this.locs;
-    }
-
-    public Shop getShop() {
-	return this.shop;
     }
 
     private int getShopArea(Location loc) {
@@ -78,10 +65,12 @@ public class CuboidShopArea {
 	return shopIndex;
     }
 
+    @Override
     public boolean isShopInArea(Location loc) {
 	return getShopArea(loc) > -1;
     }
 
+    @Override
     public void removeLocation(Location loc) throws DynamicMarketException {
 	int index = getShopArea(loc);
 	if (index < 0) {
@@ -91,15 +80,8 @@ public class CuboidShopArea {
 	this.locs.remove(index);
     }
 
-    public void setId(int id) {
-	this.id = id;
-    }
-
     public void setLocs(List<DLocation> locs) {
 	this.locs = locs;
     }
 
-    public void setShop(Shop shop) {
-	this.shop = shop;
-    }
 }
