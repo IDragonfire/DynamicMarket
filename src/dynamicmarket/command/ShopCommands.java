@@ -531,11 +531,26 @@ public class ShopCommands // TODO: All shop modification/creation/deletion comma
 	}
     }
 
+    // TODO 1.better area parsing
     @Command(aliases = { "area", "a" }, desc = "Go into Shop area mode", usage = "<shopid>", min = 1, max = 12)
     @CommandPermissions("items.update")
     public static void area(CommandContext args, DynamicMarket plugin,
 	    CommandSender sender) {
 	if (args.argsLength() == 1) {
+	    String c = null;
+	    try {
+		c = args.getString(0);
+		if (c.equals("show")) {
+		    Player p = (Player) sender;
+		    Shop s = plugin.getMarket().getShop(p.getLocation());
+		    s.getArea().toggleArea(p);
+		}
+	    } catch (Exception e) {
+		e.printStackTrace();
+	    }
+	    if (c == null || c.equals("show")) {
+		return;
+	    }
 	    try {
 		Shop shop = plugin.getMarket().getShopById(args.getInteger(0));
 		if (shop != null) {

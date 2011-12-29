@@ -8,7 +8,10 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 import com.avaje.ebean.validation.NotNull;
 
@@ -24,6 +27,34 @@ public class CuboidShopArea extends ShopArea {
 
     public CuboidShopArea() {
 	this.locs = new ArrayList<DLocation>();
+    }
+
+    @Override
+    public void markArea(Player p, boolean show) {
+	showFakeWalls(getLocs().get(0), p, show);
+    }
+
+    private void showFakeWalls(DLocation loc, Player p, boolean show) {
+
+	for (int y = loc.getMinY(); y <= loc.getMaxY(); y++) {
+	    // create NOTH and SOUTH wall
+	    for (int x = loc.getMinX(); x <= loc.getMaxX(); x++) {
+		sendFakeBlock(p, loc.getWorld(), x, y, loc.getMinZ(), show);
+		sendFakeBlock(p, loc.getWorld(), x, y, loc.getMaxZ(), show);
+	    }
+	    // create EAST and WEST wall
+	    for (int z = loc.getMinZ(); z <= loc.getMaxZ(); z++) {
+		sendFakeBlock(p, loc.getWorld(), loc.getMinX(), y, z, show);
+		sendFakeBlock(p, loc.getWorld(), loc.getMaxX(), y, z, show);
+	    }
+	}
+    }
+
+    private void sendFakeBlock(Player p, String world, int x, int y, int z,
+	    boolean show) {
+	Location tmp = new Location(Bukkit.getWorld(world), x, y, z);
+	p.sendBlockChange(tmp, ((show) ? Material.GLASS : tmp.getBlock()
+		.getType()), ((show) ? (byte) 0 : tmp.getBlock().getData()));
     }
 
     @Override
@@ -80,5 +111,4 @@ public class CuboidShopArea extends ShopArea {
     public void setLocs(List<DLocation> locs) {
 	this.locs = locs;
     }
-
 }
