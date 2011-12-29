@@ -39,7 +39,7 @@ public class DLocation {
 	setMinX(Math.min(x1, x2));
 	setMaxX(Math.max(x1, x2));
 	setMinY(Math.min(y1, y2));
-	setMaxY(Math.min(y1, y2));
+	setMaxY(Math.max(y1, y2));
 	setMinZ(Math.min(z1, z2));
 	setMaxZ(Math.max(z1, z2));
 	setWorld(world);
