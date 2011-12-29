@@ -43,6 +43,7 @@ public class DynamicCreateShopAreaListener extends BlockListener {
 		    // reset interupt and remove Listener
 		    return;
 		}
+		// TODO 0.Message System
 		DynamicCreateShopAreaListener.this.creator
 			.sendMessage("Area abort");
 		reset(false);
@@ -51,6 +52,8 @@ public class DynamicCreateShopAreaListener extends BlockListener {
     }
 
     public boolean same(Player player, Shop shop2) {
+	player.sendMessage("p:" + samePlayer(player) + " - "
+		+ (this.shop.getId() == shop2.getId()));
 	return samePlayer(player) && this.shop.getId() == shop2.getId();
     }
 
@@ -73,10 +76,12 @@ public class DynamicCreateShopAreaListener extends BlockListener {
 		    .getBlockTypeIdAt(this.pos2), (byte) 0);
 	}
 	this.pos2 = null;
-	DynamicMarketMasterShopAreaListener.INSTANCE.removeListener(this);
+	this.abortThread.interrupt();
 	if (restart) {
 	    initThread();
 	    this.abortThread.start();
+	} else {
+	    DynamicMarketMasterShopAreaListener.INSTANCE.removeListener(this);
 	}
     }
 
@@ -89,16 +94,18 @@ public class DynamicCreateShopAreaListener extends BlockListener {
 		// server lag fix
 		sendFakePackageThread(this.pos1);
 		this.creator.sendBlockChange(this.pos1, edit, (byte) 0);
+		// TODO 0.Message System
 		this.creator.sendMessage("Save pos1");
 	    } else if (this.pos2 == null) {
 		this.pos2 = event.getBlock().getLocation();
 		// server lag fix
 		sendFakePackageThread(this.pos2);
 		this.creator.sendBlockChange(this.pos2, edit, (byte) 0);
+		// TODO 0.Message System
 		this.creator
 			.sendMessage("Save pos2 ... break block to confirm type new area");
 	    } else {
-		this.abortThread.interrupt();
+		// TODO 0.Message System
 		this.creator.sendMessage("save all");
 		savePosition();
 		reset(false);

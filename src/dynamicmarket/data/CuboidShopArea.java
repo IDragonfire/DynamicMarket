@@ -65,7 +65,7 @@ public class CuboidShopArea extends ShopArea {
     public void removeLocation(Location loc) throws DynamicMarketException {
 	int index = getShopArea(loc);
 	if (index < 0) {
-	    // TODO 0.Message System
+	    // TODO 0.MessageSystem
 	    throw new DynamicMarketException("Shop not found");
 	}
 	getLocs().remove(index);

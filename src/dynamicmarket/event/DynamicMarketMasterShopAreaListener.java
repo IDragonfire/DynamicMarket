@@ -24,13 +24,16 @@ public class DynamicMarketMasterShopAreaListener extends BlockListener {
     }
 
     public void addListener(Player newCreator, Shop shop) {
-	System.out.println("add Listener");
 	for (int i = 0; i < this.listeners.size(); i++) {
 	    if (this.listeners.get(i).same(newCreator, shop)) {
+		// TODO 0.MessageSystem
+		newCreator.sendMessage("Reset Listener");
 		this.listeners.get(i).reset(true);
 		return;
 	    }
 	}
+	// TODO 0.MessageSystem
+	newCreator.sendMessage("To select the area break a block");
 	this.listeners.add(new DynamicCreateShopAreaListener(newCreator, shop));
 	this.active = true;
 	System.out.println("Listener added");
