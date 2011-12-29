@@ -64,7 +64,7 @@ public class Transaction {
     private double price;
 
     public Transaction() {
-	// TODO: ? - IDragonfire
+	// for JPA
     }
 
     public Transaction(DynamicMarket plugin, int amount, Player player,
@@ -98,7 +98,8 @@ public class Transaction {
 
 	    if (!product.hasStock(amount)) {
 		if (newVolume < 0) {
-		    throw new DynamicMarketException(Message.NO_SPACE.getMessage());
+		    throw new DynamicMarketException(
+			    Message.NO_SPACE.getMessage());
 		}
 		throw new DynamicMarketException(Message.LOW_STOCK.getMessage());
 	    }
@@ -176,12 +177,12 @@ public class Transaction {
 			    + Math.abs(newVolume) + " {}" + matrialid
 			    + " for {PRM}" + Math.abs(newPrice));
 
-	    this.time = System.currentTimeMillis() / 1000;
-	    this.who = player.getName();
-	    this.shop = newShop.getName();
-	    this.item = data.getItemType().toString();
-	    this.volume = newVolume;
-	    this.price = newPrice;
+	    setTime(System.currentTimeMillis() / 1000);
+	    setWho(player.getName());
+	    setShop(newShop.getName());
+	    setItem(data.getItemType().toString());
+	    setVolume(newVolume);
+	    setPrice(newPrice);
 
 	    if (plugin.getSetting(Setting.TRANSACTION_LOGGING, Boolean.class)) {
 		plugin.getDatabase().save(this);
@@ -193,6 +194,8 @@ public class Transaction {
 	    e.printStackTrace();
 	}
     }
+
+    // getter & setter
 
     public int getId() {
 	return this.id;

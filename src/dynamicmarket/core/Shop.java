@@ -77,18 +77,94 @@ public class Shop // TODO: Add location support.
 
     // Constructors.
     public Shop() {
-
+	// for JPA
     }
 
     public Shop(String name, boolean infiniteFunding, double funds,
 	    int maxTransactionSize) {
-	this.name = name;
-	this.infiniteFunding = infiniteFunding;
-	this.funds = funds;
-	this.maxTransactionSize = maxTransactionSize;
+	setName(name);
+	setInfiniteFunding(infiniteFunding);
+	setFunds(funds);
+	setMaxTransactionSize(maxTransactionSize);
     }
 
-    // Gets & sets.
+    // Methods
+    public void addProduct(Product product) {
+	product.setShop(this);
+	getProducts().add(product);
+    }
+
+    public Product getProduct(int type, byte data)
+	    throws DynamicMarketException {
+	for (Product product : getProducts()) {
+	    if (product.equals(type, data)) {
+		return product;
+	    }
+	}
+	throw new DynamicMarketException(getName() + " doesn't stock that!");
+    }
+
+    public Product getProduct(MaterialData data) throws DynamicMarketException {
+	return getProduct(data.getItemTypeId(), data.getData());
+    }
+
+    @SuppressWarnings("boxing")
+    public static Shop parseShop(String... args) throws DynamicMarketException {
+	try {
+	    return new Shop(args[0], Format.parseBoolean(args[1]),
+		    Format.parseDouble(args[2]), Format.parseInteger(args[3]));
+	} catch (NumberFormatException e) {
+	    // TODO: catch exception
+	    e.printStackTrace();
+
+	} catch (IndexOutOfBoundsException e) {
+	    // TODO: catch exception
+	    e.printStackTrace();
+	}
+	throw new DynamicMarketException("That is not a valid Shop.");
+    }
+
+    public static Shop parseShop(String line) throws DynamicMarketException {
+	return parseShop(line.split(","));
+    }
+
+    // TODO 2. location
+    @Deprecated
+    public static Shop parseShop(CommandContext args)
+	    throws DynamicMarketException {
+	return null;
+	// TODO: Add parseShop command.
+    }
+
+    public void remove(Product product) {
+	getProducts().remove(product);
+    }
+
+    @SuppressWarnings("boxing")
+    public String toCSV() {
+	return Messaging.combine(
+		",", // This is the separator
+		"'" + getName() + "'", isInfiniteFunding(), getFunds(),
+		Format.parseString(getMaxTransactionSize()));
+    }
+
+    @Override
+    public String toString() // TODO: Add proper spacing between columns.
+    {
+	String line = "";
+	for (Product product : getProducts()) {
+	    byte data = product.getData();
+	    String subtype = (data == 0 ? "" : "{BKT}:{PRM}" + data);
+	    line += "{CMD}" + product.getType() + subtype + " {CMD}"
+		    + product.getName() + subtype + " {}Bundle: {PRM}"
+		    + product.getBundleSize() + "{} Buy: {PRM}"
+		    + product.getBuyPrice() + " {}Sell: {PRM}"
+		    + product.getSellPrice() + "\n";
+	}
+	return line.substring(0, line.length() - 1); // Remove the extra '\n'.
+    }
+
+    // getter & setter
     public int getId() {
 	return this.id;
     }
@@ -135,82 +211,6 @@ public class Shop // TODO: Add location support.
 
     public void setMaxTransactionSize(int maxTransactionSize) {
 	this.maxTransactionSize = maxTransactionSize;
-    }
-
-    // Methods
-    public void addProduct(Product product) {
-	product.setShop(this);
-	this.products.add(product);
-    }
-
-    public Product getProduct(int type, byte data)
-	    throws DynamicMarketException {
-	for (Product product : this.products) {
-	    if (product.equals(type, data)) {
-		return product;
-	    }
-	}
-	throw new DynamicMarketException(this.name + " doesn't stock that!");
-    }
-
-    public Product getProduct(MaterialData data) throws DynamicMarketException {
-	return getProduct(data.getItemTypeId(), data.getData());
-    }
-
-    @SuppressWarnings("boxing")
-    public static Shop parseShop(String... args) throws DynamicMarketException {
-	try {
-	    return new Shop(args[0], Format.parseBoolean(args[1]),
-		    Format.parseDouble(args[2]), Format.parseInteger(args[3]));
-	} catch (NumberFormatException e) {
-	    // TODO: catch exception
-	    e.printStackTrace();
-
-	} catch (IndexOutOfBoundsException e) {
-	    // TODO: catch exception
-	    e.printStackTrace();
-	}
-	throw new DynamicMarketException("That is not a valid Shop.");
-    }
-
-    public static Shop parseShop(String line) throws DynamicMarketException {
-	return parseShop(line.split(","));
-    }
-
-    // TODO 2. location
-    @Deprecated
-    public static Shop parseShop(CommandContext args)
-	    throws DynamicMarketException {
-	return null;
-	// TODO: Add parseShop command.
-    }
-
-    public void remove(Product product) {
-	this.products.remove(product);
-    }
-
-    @SuppressWarnings("boxing")
-    public String toCSV() {
-	return Messaging.combine(
-		",", // This is the separator
-		"'" + this.name + "'", this.infiniteFunding, this.funds,
-		Format.parseString(this.maxTransactionSize));
-    }
-
-    @Override
-    public String toString() // TODO: Add proper spacing between columns.
-    {
-	String line = "";
-	for (Product product : this.products) {
-	    byte data = product.getData();
-	    String subtype = (data == 0 ? "" : "{BKT}:{PRM}" + data);
-	    line += "{CMD}" + product.getType() + subtype + " {CMD}"
-		    + product.getName() + subtype + " {}Bundle: {PRM}"
-		    + product.getBundleSize() + "{} Buy: {PRM}"
-		    + product.getBuyPrice() + " {}Sell: {PRM}"
-		    + product.getSellPrice() + "\n";
-	}
-	return line.substring(0, line.length() - 1); // Remove the extra '\n'.
     }
 
     public int getPriority() {

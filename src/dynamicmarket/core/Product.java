@@ -80,29 +80,158 @@ public class Product {
 
     // Constructors.
     public Product() {
-	// TODO: ? - IDragonfire
+	// for JPA
     }
 
     public Product(int type, byte data, int bundleSize, boolean buyable,
 	    boolean sellable, double basePrice, double maxPrice,
 	    double minPrice, double markup, double volatility, int stock,
 	    int maxStock, int minStock) {
-	this.type = type;
-	this.data = data;
-	this.bundleSize = bundleSize;
-	this.buyable = buyable;
-	this.sellable = sellable;
-	this.basePrice = basePrice;
+	setType(type);
+	setData(data);
+	setBundleSize(bundleSize);
+	setBuyable(buyable);
+	setSellable(sellable);
+	setBasePrice(basePrice);
 	setMaxPrice(maxPrice);
-	this.minPrice = minPrice;
-	this.markup = markup;
-	this.volatility = volatility;
-	this.stock = stock;
-	this.maxStock = maxStock;
-	this.minStock = minStock;
+	setMinPrice(minPrice);
+	setMarkup(markup);
+	setVolatility(volatility);
+	setStock(stock);
+	setMaxStock(maxStock);
+	setMinStock(minStock);
     }
 
-    // Gets & sets.
+    // Methods
+    public String getName() {
+	return Material.getMaterial(getType()).name().replace('_', ' ');
+    }
+
+    @SuppressWarnings("boxing")
+    public static Product parseProduct(String... args)
+	    throws DynamicMarketException {
+	// TODO: Validate args individually.
+	// throws DynamicMarketException, if the argument isn't a valid MaterialData.
+	MaterialData data = Util.getMaterialData(args[0] + ":" + args[1]);
+	try {
+	    return new Product(data.getItemTypeId(), data.getData(),
+		    Format.parseInteger(args[2]), Format.parseBoolean(args[3]),
+		    Format.parseBoolean(args[4]), Format.parseDouble(args[5]),
+		    Format.parseDouble(args[6]), Format.parseDouble(args[7]),
+		    Format.parseDouble(args[8]), Format.parseDouble(args[9]),
+		    Format.parseInteger(args[10]),
+		    Format.parseInteger(args[11]),
+		    Format.parseInteger(args[12]));
+	} catch (NumberFormatException e) {
+	    // TODO: catch exceptions
+	    e.printStackTrace();
+	} catch (IndexOutOfBoundsException e) {
+	    // TODO: catch exceptions
+	    e.printStackTrace();
+	}
+	throw new DynamicMarketException("That is not a valid Product.");
+	// Does not get executed, if the constructoris returned successfully.
+    }
+
+    public static Product parseProduct(String arg)
+	    throws DynamicMarketException {
+	// throws InvalidArgumentException, if args.split(",") is not a valid Product.
+	return parseProduct(arg.split(","));
+    }
+
+    public static Product parseProduct(CommandContext args)
+	    throws DynamicMarketException {
+	Map<String, String> properties = Util.getProperties(args.getSlice(2));
+	String[] data = args.getString(0).split(":");
+	// TODO: These string literals should really be constants
+	// & support multiple names for each property.
+	// throws DynamicMarketException, if arguments do not make a valid Product.
+	return parseProduct(
+		data[0],
+		data.length > 1 ? data[1] : "0",
+		properties.containsKey("bundlesize") ? properties
+			.get("bundlesize") : "1",
+		properties.containsKey("buyable") ? properties.get("buyable")
+			: "True",
+		properties.containsKey("sellable") ? properties.get("sellable")
+			: "True",
+		properties.containsKey("baseprice") ? properties
+			.get("baseprice") : "10",
+		properties.containsKey("maxprice") ? properties.get("maxprice")
+			: "+INF",
+		properties.containsKey("minprice") ? properties.get("minprice")
+			: "1",
+		properties.containsKey("salestax") ? properties.get("salestax")
+			: "0.06",
+		properties.containsKey("volatility") ? properties
+			.get("volatility") : "0.05",
+		properties.containsKey("stock") ? properties.get("stock") : "0",
+		properties.containsKey("maxstock") ? properties.get("maxstock")
+			: "+INF",
+		properties.containsKey("minstock") ? properties.get("minstock")
+			: "-INF");
+    }
+
+    public boolean equals(int type2, byte data2) {
+	return getType() == type2 && getData() == data2;
+    }
+
+    public double getBuyPrice() {
+	double sellPrice = getSellPrice();
+	sellPrice += sellPrice * getMarkup();
+	return Math.min(Util.round(sellPrice, 2), getMaxPrice());
+    }
+
+    public double getSellPrice() {
+	double change;
+	if (this.stock >= 0) {
+	    change = 1 - getVolatility();
+	} else {
+	    change = 1 + getVolatility();
+	}
+	double price = Math.pow(change, Math.abs(getStock())) * getBasePrice();
+	return Util.clamp(getMinPrice(), Util.round(price, 2), getMaxPrice()
+		- price * getMarkup());
+    }
+
+    public boolean hasStock(int amount) {
+	int newStock = getStock() - amount;
+	return newStock >= getMaxStock() && newStock <= getMaxStock();
+    }
+
+    @SuppressWarnings("boxing")
+    public String toCSV() {
+	return Messaging.combine(
+		",", // This is the separator.
+		this.type, this.data, this.bundleSize, this.buyable,
+		this.sellable, this.basePrice,
+		Format.parseString(this.maxPrice),
+		Format.parseString(this.minPrice), this.markup,
+		this.volatility, this.stock, Format.parseString(this.maxStock),
+		Format.parseString(this.minStock));
+    }
+
+    @Override
+    public String toString() {
+	return Messaging.combine(
+		"\n", // This is the separator between each line.
+		"{PRM}" + getName()
+			+ (this.data == 0 ? "" : "{BKT}:{PRM}" + this.data),
+		"{}Can buy: {PRM}" + Format.parseString(this.buyable),
+		"{}Can sell: {PRM}" + Format.parseString(this.sellable),
+		"{}Base price: {PRM}" + this.basePrice, "{}Max price: {PRM}"
+			+ Format.parseString(this.maxPrice),
+		"{}Min price: {PRM}" + Format.parseString(this.minPrice),
+		"{}Buy price: {PRM}" + getBuyPrice(), "{}Sell price: {PRM}"
+			+ getSellPrice(), "{}Markup: {PRM}" + this.markup * 100
+			+ "%", "{}Volatility {PRM}" + this.volatility * 100
+			+ "%", "{}Bundle size: {PRM}" + this.bundleSize,
+		"{}Stock: {PRM}" + this.stock,
+		"{}Max stock: {PRM}" + Format.parseString(this.maxStock),
+		"{}Min stock: {PRM}" + Format.parseString(this.minStock));
+    }
+
+    // getter & setter
     public int getId() {
 	return this.id;
     }
@@ -225,134 +354,5 @@ public class Product {
 
     public void setMinStock(int minStock) {
 	this.minStock = minStock;
-    }
-
-    // Methods
-    public String getName() {
-	return Material.getMaterial(this.type).name().replace('_', ' ');
-    }
-
-    @SuppressWarnings("boxing")
-    public static Product parseProduct(String... args)
-	    throws DynamicMarketException {
-	// TODO: Validate args individually.
-	// throws DynamicMarketException, if the argument isn't a valid MaterialData.
-	MaterialData data = Util.getMaterialData(args[0] + ":" + args[1]);
-	try {
-	    return new Product(data.getItemTypeId(), data.getData(),
-		    Format.parseInteger(args[2]), Format.parseBoolean(args[3]),
-		    Format.parseBoolean(args[4]), Format.parseDouble(args[5]),
-		    Format.parseDouble(args[6]), Format.parseDouble(args[7]),
-		    Format.parseDouble(args[8]), Format.parseDouble(args[9]),
-		    Format.parseInteger(args[10]),
-		    Format.parseInteger(args[11]),
-		    Format.parseInteger(args[12]));
-	} catch (NumberFormatException e) {
-	    // TODO: catch exceptions
-	    e.printStackTrace();
-	} catch (IndexOutOfBoundsException e) {
-	    // TODO: catch exceptions
-	    e.printStackTrace();
-	}
-	throw new DynamicMarketException("That is not a valid Product.");
-	// Does not get executed, if the constructoris returned successfully.
-    }
-
-    public static Product parseProduct(String arg)
-	    throws DynamicMarketException {
-	// throws InvalidArgumentException, if args.split(",") is not a valid Product.
-	return parseProduct(arg.split(","));
-    }
-
-    public static Product parseProduct(CommandContext args)
-	    throws DynamicMarketException {
-	Map<String, String> properties = Util.getProperties(args.getSlice(2));
-	String[] data = args.getString(0).split(":");
-	// TODO: These string literals should really be constants
-	// & support multiple names for each property.
-	// throws DynamicMarketException, if arguments do not make a valid Product.
-	return parseProduct(
-		data[0],
-		data.length > 1 ? data[1] : "0",
-		properties.containsKey("bundlesize") ? properties
-			.get("bundlesize") : "1",
-		properties.containsKey("buyable") ? properties.get("buyable")
-			: "True",
-		properties.containsKey("sellable") ? properties.get("sellable")
-			: "True",
-		properties.containsKey("baseprice") ? properties
-			.get("baseprice") : "10",
-		properties.containsKey("maxprice") ? properties.get("maxprice")
-			: "+INF",
-		properties.containsKey("minprice") ? properties.get("minprice")
-			: "1",
-		properties.containsKey("salestax") ? properties.get("salestax")
-			: "0.06",
-		properties.containsKey("volatility") ? properties
-			.get("volatility") : "0.05",
-		properties.containsKey("stock") ? properties.get("stock") : "0",
-		properties.containsKey("maxstock") ? properties.get("maxstock")
-			: "+INF",
-		properties.containsKey("minstock") ? properties.get("minstock")
-			: "-INF");
-    }
-
-    public boolean equals(int type2, byte data2) {
-	return this.type == type2 && this.data == data2;
-    }
-
-    public double getBuyPrice() {
-	double sellPrice = getSellPrice();
-	sellPrice += sellPrice * this.markup;
-	return Math.min(Util.round(sellPrice, 2), this.maxPrice);
-    }
-
-    public double getSellPrice() {
-	double change;
-	if (this.stock >= 0) {
-	    change = 1 - this.volatility;
-	} else {
-	    change = 1 + this.volatility;
-	}
-	double price = Math.pow(change, Math.abs(this.stock)) * this.basePrice;
-	return Util.clamp(this.minPrice, Util.round(price, 2), this.maxPrice
-		- price * this.markup);
-    }
-
-    public boolean hasStock(int amount) {
-	int newStock = this.stock - amount;
-	return newStock >= this.minStock && newStock <= this.maxStock;
-    }
-
-    @SuppressWarnings("boxing")
-    public String toCSV() {
-	return Messaging.combine(
-		",", // This is the separator.
-		this.type, this.data, this.bundleSize, this.buyable,
-		this.sellable, this.basePrice,
-		Format.parseString(this.maxPrice),
-		Format.parseString(this.minPrice), this.markup,
-		this.volatility, this.stock, Format.parseString(this.maxStock),
-		Format.parseString(this.minStock));
-    }
-
-    @Override
-    public String toString() {
-	return Messaging.combine(
-		"\n", // This is the separator between each line.
-		"{PRM}" + getName()
-			+ (this.data == 0 ? "" : "{BKT}:{PRM}" + this.data),
-		"{}Can buy: {PRM}" + Format.parseString(this.buyable),
-		"{}Can sell: {PRM}" + Format.parseString(this.sellable),
-		"{}Base price: {PRM}" + this.basePrice, "{}Max price: {PRM}"
-			+ Format.parseString(this.maxPrice),
-		"{}Min price: {PRM}" + Format.parseString(this.minPrice),
-		"{}Buy price: {PRM}" + getBuyPrice(), "{}Sell price: {PRM}"
-			+ getSellPrice(), "{}Markup: {PRM}" + this.markup * 100
-			+ "%", "{}Volatility {PRM}" + this.volatility * 100
-			+ "%", "{}Bundle size: {PRM}" + this.bundleSize,
-		"{}Stock: {PRM}" + this.stock,
-		"{}Max stock: {PRM}" + Format.parseString(this.maxStock),
-		"{}Min stock: {PRM}" + Format.parseString(this.minStock));
     }
 }

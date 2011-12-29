@@ -38,10 +38,6 @@ public class CuboidShopArea extends ShopArea {
 
     }
 
-    public List<DLocation> getLocs() {
-	return this.locs;
-    }
-
     private int getShopArea(Location loc) {
 	int shopIndex = -1;
 	DLocation shoploc;
@@ -73,6 +69,12 @@ public class CuboidShopArea extends ShopArea {
 	    throw new DynamicMarketException("Shop not found");
 	}
 	getLocs().remove(index);
+    }
+
+    // getter & setter
+
+    public List<DLocation> getLocs() {
+	return this.locs;
     }
 
     public void setLocs(List<DLocation> locs) {

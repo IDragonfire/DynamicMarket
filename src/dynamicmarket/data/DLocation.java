@@ -31,90 +31,91 @@ public class DLocation {
     private String world;
 
     public DLocation() {
-	// for persist
+	// for JPA
     }
 
     public DLocation(int x1, int x2, int y1, int y2, int z1, int z2,
 	    String world) {
-	this.minX = Math.min(x1, x2);
-	this.maxX = Math.max(x1, x2);
-	this.minY = Math.min(y1, y2);
-	this.maxY = Math.min(y1, y2);
-	this.minZ = Math.min(z1, z2);
-	this.maxZ = Math.max(z1, z2);
-	this.world = world;
+	setMinX(Math.min(x1, x2));
+	setMaxX(Math.max(x1, x2));
+	setMinY(Math.min(y1, y2));
+	setMaxY(Math.min(y1, y2));
+	setMinZ(Math.min(z1, z2));
+	setMaxZ(Math.max(z1, z2));
+	setWorld(world);
     }
+
+    // getter & setter
 
     public CuboidShopArea getArea() {
 	return this.area;
-    }
-
-    public int getDloctionid() {
-	return this.dloctionid;
-    }
-
-    public int getMaxX() {
-	return this.maxX;
-    }
-
-    public int getMaxY() {
-	return this.maxY;
-    }
-
-    public int getMaxZ() {
-	return this.maxZ;
-    }
-
-    public int getMinX() {
-	return this.minX;
-    }
-
-    public int getMinY() {
-	return this.minY;
-    }
-
-    public int getMinZ() {
-	return this.minZ;
-    }
-
-    public String getWorld() {
-	return this.world;
     }
 
     public void setArea(CuboidShopArea area) {
 	this.area = area;
     }
 
+    public int getDloctionid() {
+	return this.dloctionid;
+    }
+
     public void setDloctionid(int dloctionid) {
 	this.dloctionid = dloctionid;
+    }
+
+    public int getMaxX() {
+	return this.maxX;
     }
 
     public void setMaxX(int maxX) {
 	this.maxX = maxX;
     }
 
+    public int getMaxY() {
+	return this.maxY;
+    }
+
     public void setMaxY(int maxY) {
 	this.maxY = maxY;
+    }
+
+    public int getMaxZ() {
+	return this.maxZ;
     }
 
     public void setMaxZ(int maxZ) {
 	this.maxZ = maxZ;
     }
 
+    public int getMinX() {
+	return this.minX;
+    }
+
     public void setMinX(int minX) {
 	this.minX = minX;
+    }
+
+    public int getMinY() {
+	return this.minY;
     }
 
     public void setMinY(int minY) {
 	this.minY = minY;
     }
 
+    public int getMinZ() {
+	return this.minZ;
+    }
+
     public void setMinZ(int minZ) {
 	this.minZ = minZ;
+    }
+
+    public String getWorld() {
+	return this.world;
     }
 
     public void setWorld(String world) {
 	this.world = world;
     }
-
 }

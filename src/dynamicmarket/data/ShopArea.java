@@ -37,6 +37,8 @@ public abstract class ShopArea {
     public abstract void addLocation(Object locationObject)
 	    throws DynamicMarketException;
 
+    // getter & setter
+
     public Shop getShop() {
 	return this.shop;
     }
