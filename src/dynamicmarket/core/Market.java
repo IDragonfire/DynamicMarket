@@ -47,16 +47,16 @@ public class Market {
     }
 
     public void addShop(Shop shop) {
-	this.shops.add(shop);
+	getShops().add(shop);
     }
 
     public Shop getShopById(int id) throws DynamicMarketException {
-	if (this.shops == null) {
+	if (getShops() == null) {
 	    throw new DynamicMarketException("Shops didn't init correctly");
 	}
-	for (int i = 0; i < this.shops.size(); i++) {
-	    if (this.shops.get(i).getId() == id) {
-		return this.shops.get(i);
+	for (int i = 0; i < getShops().size(); i++) {
+	    if (getShops().get(i).getId() == id) {
+		return getShops().get(i);
 	    }
 	}
 	throw new DynamicMarketException("Shop with these id doesn't exists");
@@ -64,7 +64,7 @@ public class Market {
 
     // TODO: more then one shop per location?
     public Shop getShop(Location loc) throws DynamicMarketException {
-	if (this.shops == null) {
+	if (getShops() == null) {
 	    throw new DynamicMarketException("Shops didn't init correctly");
 	}
 	if (loc == null) {
@@ -72,17 +72,13 @@ public class Market {
 		    "Location is for finding shop ist null");
 	}
 	ShopArea tmparea;
-	System.out.println("###### shop size: " + this.shops.size());
-	for (int i = 0; i < this.shops.size(); i++) {
-	    System.out.println("##############shop" + i);
-	    tmparea = this.shops.get(i).getArea();
+	for (int i = 0; i < getShops().size(); i++) {
+	    tmparea = getShops().get(i).getArea();
 	    if (tmparea == null) {
 		throw new DynamicMarketException("No area defined");
 	    }
-	    System.out.println("########### AREA NOT NULL id:"
-		    + tmparea.getId());
 	    if (tmparea.isShopInArea(loc)) {
-		return this.shops.get(i);
+		return getShops().get(i);
 	    }
 	}
 	throw new DynamicMarketException("No Shop found in these location");

@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
 import javax.persistence.OneToMany;
 
 import org.bukkit.Location;
@@ -16,7 +15,6 @@ import com.avaje.ebean.validation.NotNull;
 import dynamicmarket.DynamicMarketException;
 
 @Entity
-@Inheritance
 @DiscriminatorValue("CuboidShopArea")
 public class CuboidShopArea extends ShopArea {
 
@@ -32,8 +30,7 @@ public class CuboidShopArea extends ShopArea {
     public void addLocation(Object locationObject)
 	    throws DynamicMarketException {
 	if (locationObject instanceof DLocation) {
-	    this.locs.add((DLocation) locationObject);
-	    // TODO: FIX SAVE
+	    getLocs().add((DLocation) locationObject);
 	    ((DLocation) locationObject).setArea(this);
 	} else {
 	    throw new DynamicMarketException("Wrong Location object");
@@ -48,10 +45,8 @@ public class CuboidShopArea extends ShopArea {
     private int getShopArea(Location loc) {
 	int shopIndex = -1;
 	DLocation shoploc;
-	System.out.println("######### area size" + this.locs.size());
-	for (int i = 0; i < this.locs.size(); i++) {
-	    System.out.println("##############area" + i);
-	    shoploc = this.locs.get(i);
+	for (int i = 0; i < getLocs().size(); i++) {
+	    shoploc = getLocs().get(i);
 	    if (shoploc.getMinX() <= loc.getX()
 		    && loc.getX() <= shoploc.getMaxY()
 		    && shoploc.getMinY() <= loc.getY()
@@ -77,7 +72,7 @@ public class CuboidShopArea extends ShopArea {
 	    // TODO 0.Message System
 	    throw new DynamicMarketException("Shop not found");
 	}
-	this.locs.remove(index);
+	getLocs().remove(index);
     }
 
     public void setLocs(List<DLocation> locs) {
